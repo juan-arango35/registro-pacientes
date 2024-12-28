@@ -1,9 +1,10 @@
 import {useForm} from "react-hook-form"
 import Error from "./Error";
+import type { DraftPatient } from "../types";
 export default function PacientForm() {
-    const {register, handleSubmit, formState: {errors}} = useForm();
-    function registroPaciente(){
-        console.log("registro de nuevo paciente")
+    const {register, handleSubmit, formState: {errors}} = useForm<DraftPatient>();
+    function registroPaciente(data: DraftPatient){ // son los datos del paciente que se obtienen del formulario llenado correctamente
+        console.log("datos", data) 
     }
   
     return (
@@ -39,27 +40,27 @@ export default function PacientForm() {
                             })
                         }
                     />
-                {errors.name && <Error>{errors.name?.message?.toString()}</Error>}
-                {errors.maxLength && <Error>{errors.maxLength?.message?.toString()}</Error>}
+                {errors.name && <Error>{errors.name?.message}</Error>}
+                
                 </div>
   
                 <div className="mb-5">
-                  <label htmlFor="caretaker" className="text-sm uppercase font-bold">
+                  <label htmlFor="propietario" className="text-sm uppercase font-bold">
                       Propietario 
                   </label>
                   <input  
-                      id="caretaker"
+                      id="propietario"
                       className="w-full p-3  border border-gray-100"  
                       type="text" 
                       placeholder="Nombre del Propietario" 
                       {
-                        ...register("caretaker", {
+                        ...register("propietario", {
                             required: "El nombre del propietario  es obligatorio",
                           
                         })
                     }
                     />
-                    {errors.caretaker && <Error>{errors.caretaker?.message?.toString()}</Error>}
+                    {errors.propietario && <Error>{errors.propietario?.message}</Error>}
                 </div>
   
               <div className="mb-5">
@@ -79,7 +80,7 @@ export default function PacientForm() {
                         }
                       })} 
                 />
-                   {errors.email && <Error>{errors.email?.message?.toString()}</Error>}
+                   {errors.email && <Error>{errors.email?.message}</Error>}
               </div>
   
               <div className="mb-5">
@@ -97,7 +98,7 @@ export default function PacientForm() {
                         })
                     }
                   />
-                  {errors.date && <Error>{errors.date?.message?.toString()}</Error>}
+                  {errors.date && <Error>{errors.date?.message}</Error>}
               </div>
               
               <div className="mb-5">
@@ -115,7 +116,7 @@ export default function PacientForm() {
                         })
                     }
                   ></textarea>
-                   {errors.symptoms && <Error>{errors.symptoms?.message?.toString()}</Error>}
+                   {errors.symptoms && <Error>{errors.symptoms?.message}</Error>}
               </div>
   
               <input
