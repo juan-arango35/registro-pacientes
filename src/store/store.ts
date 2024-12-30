@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { devtools } from "zustand/middleware"; // esto es para ver los estados de zustand
 import { DraftPatient, Paciente } from "../types";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -7,8 +8,10 @@ import { v4 as uuidv4 } from 'uuid';
 type PatienteState = {
     //la funciones que voy a utlizar en los componentes siempre deben estar en el tipado
     pacientes : Paciente[]
+    idActivo:Paciente["id"] // => para generar la edicion del paciente
     agregaPaciente: (data:DraftPatient) => void
     eliminarPaciente: (id:Paciente['id']) => void 
+    traerPacientePorID: (id:Paciente['id']) => void
 }
 
 const createPaciente= (paciente:DraftPatient):Paciente => {
@@ -16,8 +19,10 @@ const createPaciente= (paciente:DraftPatient):Paciente => {
 }
 
 //estas son las funciones que se obtendran del store, para usarlas en los componentes
-export const usePacienteStore = create<PatienteState>((set)=>({
+export const usePacienteStore = create<PatienteState>()(
+    devtools((set)=>({
     pacientes: [],
+    idActivo: '',  // => para generar la edicion del paciente
     agregaPaciente: (data) => {
         const nuevoPaciente = createPaciente(data)
         set((state)=>({
@@ -28,6 +33,13 @@ export const usePacienteStore = create<PatienteState>((set)=>({
         set((state)=>({
             pacientes: state.pacientes.filter(paciente => paciente.id !== id)
         }))
+    },
+    traerPacientePorID: (id) => {
+        set(()=>({
+            idActivo: id
+        }))
     }
 
-}))
+
+
+})))
