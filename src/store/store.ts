@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools } from "zustand/middleware"; // esto es para ver los estados de zustand
+import { createJSONStorage, devtools, persist } from "zustand/middleware"; // esto es para ver los estados de zustand y persist es para guardar en localstorage
 import { DraftPatient, Paciente } from "../types";
 import { v4 as uuidv4 } from "uuid";
 
@@ -11,7 +11,7 @@ type PatienteState = {
   agregaPaciente: (data: DraftPatient) => void;
   eliminarPaciente: (id: Paciente["id"]) => void;
   traerPacientePorID: (id: Paciente["id"]) => void;
-  actualizarPaciente:(data:DraftPatient) => void
+  actualizarPaciente: (data: DraftPatient) => void;
 };
 
 const createPaciente = (paciente: DraftPatient): Paciente => {
@@ -20,34 +20,43 @@ const createPaciente = (paciente: DraftPatient): Paciente => {
 
 //estas son las funciones que se obtendran del store, para usarlas en los componentes
 export const usePacienteStore = create<PatienteState>()(
-  devtools((set) => ({
-    pacientes: [],
-    idActivo: "", // => para generar la edicion del paciente
-    agregaPaciente: (data) => {
-      const nuevoPaciente = createPaciente(data);
-      set((state) => ({
-        pacientes: [...state.pacientes, nuevoPaciente],
-      }));
-    },
-    eliminarPaciente: (id) => {
-      set((state) => ({
-        pacientes: state.pacientes.filter((paciente) => paciente.id !== id),
-      }));
-    },
-    traerPacientePorID: (id) => {
-      set(() => ({
-        idActivo: id,
-      }));
-    },
+  devtools(
+    persist(
+      (set) => ({
+        pacientes: [],
+        idActivo: "", // => para generar la edicion del paciente
+        agregaPaciente: (data) => {
+          const nuevoPaciente = createPaciente(data);
+          set((state) => ({
+            pacientes: [...state.pacientes, nuevoPaciente],
+          }));
+        },
+        eliminarPaciente: (id) => {
+          set((state) => ({
+            pacientes: state.pacientes.filter((paciente) => paciente.id !== id),
+          }));
+        },
+        traerPacientePorID: (id) => {
+          set(() => ({
+            idActivo: id,
+          }));
+        },
 
-
-    actualizarPaciente:(data) => {
-      set((state) => ({
-        pacientes : state.pacientes.map( paciente =>paciente.id === state.idActivo ? {id : state.idActivo, ...data} : paciente),
-        idActivo: ""
-      }))
-    }
-
-  
-  })
-))
+        actualizarPaciente: (data) => {
+          set((state) => ({
+            pacientes: state.pacientes.map((paciente) =>
+              paciente.id === state.idActivo
+                ? { id: state.idActivo, ...data }
+                : paciente
+            ),
+            idActivo: "",
+          }));
+        },
+      }),
+      {
+        name: "pacientes-storage",
+        storage: createJSONStorage(() => localStorage), // tambien se puede usar sessionStorage
+      }
+    )
+  )
+);
