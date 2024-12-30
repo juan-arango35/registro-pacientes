@@ -8,11 +8,13 @@ export default function PacientForm() {
     register,
     handleSubmit,
     formState: { errors },
+    reset //esta funcion limpia el formulario
   } = useForm<DraftPatient>();
   function registroPaciente(data: DraftPatient) {
     // son los datos del paciente que se obtienen del formulario llenado correctamente
 
     agregaPaciente(data); // obtenemos del store el store y lo llamamos aqui
+    reset()
   }
 
   return (
