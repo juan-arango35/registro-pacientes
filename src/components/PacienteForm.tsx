@@ -2,24 +2,46 @@ import { useForm } from "react-hook-form";
 import Error from "./Error";
 import type { DraftPatient } from "../types";
 import { usePacienteStore } from "../store/store";
+import { useEffect } from "react";
 export default function PacientForm() {
-  const { agregaPaciente } = usePacienteStore();
+  const { agregaPaciente, idActivo, pacientes, actualizarPaciente } = usePacienteStore();
   const {
     register,
     handleSubmit,
+    setValue, // regresar un valor al formulario
     formState: { errors },
-    reset //esta funcion limpia el formulario
+    reset, //esta funcion limpia el formulario
   } = useForm<DraftPatient>();
-  function registroPaciente(data: DraftPatient) {
-    // son los datos del paciente que se obtienen del formulario llenado correctamente
 
-    agregaPaciente(data); // obtenemos del store el store y lo llamamos aqui
-    reset()
+  //agregamos el idActivo para poder llenar el formulario cuando editamos
+  useEffect(() => {
+    if (idActivo) {
+      const pacienteActivo = pacientes.filter(
+        (paciente) => paciente.id === idActivo
+      )[0];
+      setValue("name", pacienteActivo.name);
+      setValue("propietario", pacienteActivo.propietario);
+      setValue("email", pacienteActivo.email);
+      setValue("date", pacienteActivo.date);
+      setValue("symptoms", pacienteActivo.symptoms);
+    }
+  }, [idActivo]);
+  function registroPaciente(data: DraftPatient) {
+    if(idActivo) {
+      actualizarPaciente(data)
+    } else {
+      agregaPaciente(data)
+    }
+
+
+    reset();
   }
 
   return (
     <div className="md:w-1/2 lg:w-2/5 mx-5">
-      <h2 className="font-black text-3xl text-center">Seguimiento Pacientes  </h2>
+      <h2 className="font-black text-3xl text-center">
+        Seguimiento Pacientes{" "}
+      </h2>
 
       <p className="text-lg mt-5 text-center mb-10">
         Añade Pacientes y {""}
