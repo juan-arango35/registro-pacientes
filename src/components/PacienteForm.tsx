@@ -3,8 +3,11 @@ import Error from "./Error";
 import type { DraftPatient } from "../types";
 import { usePacienteStore } from "../store/store";
 import { useEffect } from "react";
+import { toast } from "react-toastify"; // para agregar animaciones de carga
+
 export default function PacientForm() {
-  const { agregaPaciente, idActivo, pacientes, actualizarPaciente } = usePacienteStore();
+  const { agregaPaciente, idActivo, pacientes, actualizarPaciente } =
+    usePacienteStore();
   const {
     register,
     handleSubmit,
@@ -27,12 +30,13 @@ export default function PacientForm() {
     }
   }, [idActivo]);
   function registroPaciente(data: DraftPatient) {
-    if(idActivo) {
-      actualizarPaciente(data)
+    if (idActivo) {
+      actualizarPaciente(data);
+      toast.success("Paciente Actualizado Correctamente") // animaciones de carga
     } else {
-      agregaPaciente(data)
+      agregaPaciente(data);
+      toast.success("Paciente Registrado Correctamente") // animaciones de caraga
     }
-
 
     reset();
   }

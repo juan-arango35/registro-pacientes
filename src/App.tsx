@@ -1,5 +1,7 @@
 import PacienteForm from "./components/PacienteForm";
 import PacientesList from "./components/PacientesList";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // son los estilos de las animacioens de carga
 
 
 function App() {
@@ -14,6 +16,8 @@ function App() {
         <PacientesList/>
       </div>
     </div>
+
+    <ToastContainer/>
     
     </>
   );
